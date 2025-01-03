@@ -1,0 +1,9 @@
+/runtime/*
+/public/uploads/*
+/public/assets/libs/*
+/.idea
+/.vscode
+*.log
+.env
+.user.ini
+composer.lock
