@@ -4,7 +4,7 @@ return array (
   'name' => '小微会报',
   'beian' => '',
   'cdnurl' => '',
-  'version' => '1.0.6',
+  'version' => '1.0.33',
   'timezone' => 'Asia/Shanghai',
   'forbiddenip' => '',
   'languages' => 

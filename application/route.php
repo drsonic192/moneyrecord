@@ -1,25 +1,24 @@
 <?php
 
-// +----------------------------------------------------------------------
-// | ThinkPHP [ WE CAN DO IT JUST THINK ]
-// +----------------------------------------------------------------------
-// | Copyright (c) 2006~2016 http://thinkphp.cn All rights reserved.
-// +----------------------------------------------------------------------
-// | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
-// +----------------------------------------------------------------------
-// | Author: liu21st <liu21st@gmail.com>
-// +----------------------------------------------------------------------
+use think\Route;
+
+Route::group('admin', function () {
+    // 企业管理路由
+    Route::get('Company/company/index', 'admin/Company.company/index');
+    Route::get('Company/company/add', 'admin/Company.company/add');
+    Route::get('Company/company/edit', 'admin/Company.company/edit');
+    Route::get('Company/company/del', 'admin/Company.company/del');
+    
+    // 企业员工管理路由
+    Route::rule('company/user/selectpage', 'admin/Company.user/selectpage', 'GET|POST', ['deny_ext' => false]);
+    Route::rule('company/user/index', 'admin/Company.user/index', 'GET|POST');
+    Route::rule('company/user/add', 'admin/Company.user/add', 'GET|POST');
+    Route::rule('company/user/edit', 'admin/Company.user/edit', 'GET|POST');
+    Route::rule('company/user/del', 'admin/Company.user/del', 'GET|POST');
+});
 
 return [
-    //别名配置,别名只能是映射到控制器且访问时必须加上请求的方法
-    '__alias__'   => [
-    ],
-    //变量规则
-    '__pattern__' => [
-    ],
-//        域名绑定到模块
-//        '__domain__'  => [
-//            'admin' => 'admin',
-//            'api'   => 'api',
-//        ],
+    '__alias__'   => [],
+    '__pattern__' => [],
+    '__domain__'  => [],
 ];

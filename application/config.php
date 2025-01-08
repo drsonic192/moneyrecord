@@ -18,9 +18,9 @@ return [
     // 应用命名空间
     'app_namespace'          => 'app',
     // 应用调试模式
-    'app_debug'              => Env::get('app.debug', false),
+    'app_debug'              => Env::get('app.debug', true),
     // 应用Trace
-    'app_trace'              => Env::get('app.trace', false),
+    'app_trace'              => Env::get('app.trace', true),
     // 应用模式状态
     'app_status'             => '',
     // 是否支持多模块
@@ -159,7 +159,7 @@ return [
     // 错误显示信息,非调试模式有效
     'error_message'          => '你所浏览的页面暂时无法访问',
     // 显示错误信息
-    'show_error_msg'         => false,
+    'show_error_msg'         => true,
     // 异常处理handle类 留空使用 \think\exception\Handle
     'exception_handle'       => '',
     // +----------------------------------------------------------------------
@@ -171,7 +171,15 @@ return [
         // 日志保存目录
         'path'  => LOG_PATH,
         // 日志记录级别
-        'level' => [],
+        'level' => ['error', 'notice', 'info', 'debug', 'sql'],
+        // 单文件日志写入
+        'single'=> false,
+        // 独立日志级别
+        'apart_level' => ['error', 'sql'],
+        // 最大日志文件数量
+        'max_files' => 0,
+        // 是否关闭日志写入
+        'close' => false,
     ],
     // +----------------------------------------------------------------------
     // | Trace设置 开启 app_trace 后 有效

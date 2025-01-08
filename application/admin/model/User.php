@@ -20,7 +20,8 @@ class User extends Model
     protected $append = [
         'prevtime_text',
         'logintime_text',
-        'jointime_text'
+        'jointime_text',
+        'group_text'
     ];
 
     public function getOriginData()
@@ -109,6 +110,11 @@ class User extends Model
     public function group()
     {
         return $this->belongsTo('UserGroup', 'group_id', 'id', [], 'LEFT')->setEagerlyType(0);
+    }
+
+    public function getGroupTextAttr($value, $data)
+    {
+        return isset($data['group_id']) ? UserGroup::where('id', $data['group_id'])->value('name') : '';
     }
 
 }
