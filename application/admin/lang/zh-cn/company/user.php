@@ -16,5 +16,6 @@ return [
     'Updatetime'       => '更新时间',
     'Deletetime'       => '删除时间',
     'Please select company' => '请选择企业',
-    'User already exists in company' => '该用户已在企业中存在'
+    'User already exists in company' => '该用户已在企业中存在',
+    'Unbind' => '未绑定'
 ]; 

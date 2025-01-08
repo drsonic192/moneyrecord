@@ -62,9 +62,27 @@ class User extends Backend
                     $this->error(__('Please select company'));
                 }
                 
-                if (!$this->model->checkUserExists($params['user_id'], $params['company_id'])) {
-                    $this->error(__('User already exists in company'));
+                // 检查用户是否已绑定其他企业员工
+                $bound = $this->model
+                    ->where('user_id', $params['user_id'])
+                    ->find();
+                
+                if ($bound) {
+                    // 如果前端确认替换
+                    if ($this->request->post('replace_binding')) {
+                        // 解除原有用户的绑定关系
+                        $this->model
+                            ->where('user_id', $params['user_id'])
+                            ->update([
+                                'user_id' => null  // 直接设置为 null 表示解除绑定
+                            ]);
+                    } else {
+                        $this->error(__('User already exists in company'));
+                    }
                 }
+                
+                // 设置状态为正常
+                $params['status'] = 'normal';
                 
                 $result = $this->model->allowField(true)->save($params);
                 if ($result === false) {
@@ -92,7 +110,7 @@ class User extends Backend
     {
         $row = $this->model
             ->alias('cu')
-            ->join('mmoney_user u', 'u.id = cu.user_id')
+            ->join('mmoney_user u', 'u.id = cu.user_id', 'LEFT')
             ->join('mmoney_company c', 'c.id = cu.company_id')
             ->join('mmoney_user_group g', 'g.id = u.group_id', 'LEFT')
             ->where('cu.id', $ids)
@@ -115,13 +133,13 @@ class User extends Backend
         $viewData = [
             'id' => $row['id'],
             'company_id' => $row['company_id'],
-            'user_id' => $row['user_id'],
-            'nickname' => $row['nickname'],
+            'user_id' => $row['user_id'] ?? '',
+            'nickname' => $row['nickname'] ?? '',
             'realname' => $row['realname'],
             'position' => $row['position'],
             'role' => $row['role'],
             'status' => $row['status'],
-            'user_text' => $row['nickname']  // 只显示昵称
+            'user_text' => $row['nickname'] ?? ''
         ];
 
         $this->view->assign([
@@ -146,23 +164,26 @@ class User extends Backend
                     // 检查用户是否已绑定其他企业员工
                     $bound = $this->model
                         ->where('user_id', $params['user_id'])
-                        ->where('id', '<>', $ids)  // 排除当前记录
-                        ->where('deletetime', 'null')
+                        ->where('id', '<>', $ids)
                         ->find();
                     
                     if ($bound) {
                         // 如果前端确认替换
                         if ($this->request->post('replace_binding')) {
-                            // 解除原有绑定
+                            // 解除原有用户的绑定关系
                             $this->model
                                 ->where('user_id', $params['user_id'])
-                                ->where('deletetime', 'null')
-                                ->update(['deletetime' => time()]);
+                                ->update([
+                                    'user_id' => null  // 直接设置为 null 表示解除绑定
+                                ]);
                         } else {
                             $this->error(__('User already exists in company'));
                         }
                     }
                 }
+                
+                // 设置当前记录为正常状态
+                $params['status'] = 'normal';
                 
                 $result = $row->allowField(true)->save($params);
                 if ($result === false) {
@@ -224,8 +245,7 @@ class User extends Backend
                     ->alias('cu')
                     ->join('mmoney_company c', 'c.id = cu.company_id')
                     ->where('cu.user_id', 'in', $userIds)
-                    ->where('cu.deletetime', 'null')
-                    ->field('cu.user_id, c.company_name, cu.realname')
+                    ->field('cu.id, cu.user_id, c.company_name, cu.realname')
                     ->select();
                     
                 foreach ($boundInfo as $info) {
@@ -310,13 +330,12 @@ class User extends Backend
     {
         if ($this->request->isPost()) {
             $userId = $this->request->post('user_id');
-            $currentId = $this->request->post('current_id', 0);  // 当前记录ID
+            $currentId = $this->request->post('current_id', 0);
             
             // 查询用户是否已绑定其他企业员工
             $bound = $this->model
                 ->where('user_id', $userId)
-                ->where('id', '<>', $currentId)  // 排除当前记录
-                ->where('deletetime', 'null')
+                ->where('id', '<>', $currentId)
                 ->find();
             
             return json([

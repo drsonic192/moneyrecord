@@ -15,7 +15,6 @@ class CompanyUser extends Model
     // 定义时间戳字段名
     protected $createTime = 'createtime';
     protected $updateTime = 'updatetime';
-    protected $deleteTime = 'deletetime';
     
     // 追加属性
     protected $append = [
@@ -37,7 +36,11 @@ class CompanyUser extends Model
     // 状态列表
     public static function getStatusList()
     {
-        return ['normal' => __('Normal'), 'hidden' => __('Hidden')];
+        return [
+            'normal' => __('Normal'),
+            'hidden' => __('Hidden'),
+            'unbind' => __('Unbind')
+        ];
     }
     
     // 获取角色文本
